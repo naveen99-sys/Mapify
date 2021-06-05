@@ -27,8 +27,8 @@ class Workout {
   }
 }
 
-class Running extends Workout {
-  type = 'running';
+class Pass extends Workout {
+  type = 'pass';
 
   constructor(coords, distance, duration, cadence) {
     super(coords, distance, duration);
@@ -44,13 +44,13 @@ class Running extends Workout {
   }
 }
 
-class Cycling extends Workout {
-  type = 'cycling';
+class Fail extends Workout {
+  type = 'fail';
 
   constructor(coords, distance, duration, elevationGain) {
     super(coords, distance, duration);
     this.elevationGain = elevationGain;
-    // this.type = 'cycling';
+    // this.type = 'fail';
     this.calcSpeed();
     this._setDescription();
   }
@@ -62,9 +62,9 @@ class Cycling extends Workout {
   }
 }
 
-// const run1 = new Running([39, -12], 5.2, 24, 178);
-// const cycling1 = new Cycling([39, -12], 27, 95, 523);
-// console.log(run1, cycling1);
+// const run1 = new pass([39, -12], 5.2, 24, 178);
+// const cycling1 = new fail([39, -12], 27, 95, 523);
+// console.log(pass1, fail1);
 
 ///////////////////////////////////////
 // APPLICATION ARCHITECTURE
@@ -135,8 +135,11 @@ class App {
 
   _hideForm() {
     // Empty inputs
-    inputDistance.value = inputDuration.value = inputCadence.value = inputElevation.value =
-      '';
+    inputDistance.value =
+      inputDuration.value =
+      inputCadence.value =
+      inputElevation.value =
+        '';
 
     form.style.display = 'none';
     form.classList.add('hidden');
@@ -163,7 +166,7 @@ class App {
     let workout;
 
     // If workout running, create running object
-    if (type === 'running') {
+    if (type === 'pass') {
       const cadence = +inputCadence.value;
 
       // Check if data is valid
@@ -176,11 +179,11 @@ class App {
       )
         return alert('Inputs have to be positive numbers!');
 
-      workout = new Running([lat, lng], distance, duration, cadence);
+      workout = new Pass([lat, lng], distance, duration, cadence);
     }
 
     // If workout cycling, create cycling object
-    if (type === 'cycling') {
+    if (type === 'fail') {
       const elevation = +inputElevation.value;
 
       if (
@@ -189,7 +192,7 @@ class App {
       )
         return alert('Inputs have to be positive numbers!');
 
-      workout = new Cycling([lat, lng], distance, duration, elevation);
+      workout = new Fail([lat, lng], distance, duration, elevation);
     }
 
     // Add new object to workout array
@@ -221,7 +224,7 @@ class App {
         })
       )
       .setPopupContent(
-        `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
+        `${workout.type === 'pass' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
       )
       .openPopup();
   }
@@ -232,7 +235,7 @@ class App {
         <h2 class="workout__title">${workout.description}</h2>
         <div class="workout__details">
           <span class="workout__icon">${
-            workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
+            workout.type === 'pass' ? '🏃‍♂️' : '🚴‍♀️'
           }</span>
           <span class="workout__value">${workout.distance}</span>
           <span class="workout__unit">km</span>
@@ -244,7 +247,7 @@ class App {
         </div>
     `;
 
-    if (workout.type === 'running')
+    if (workout.type === 'pass')
       html += `
         <div class="workout__details">
           <span class="workout__icon">⚡️</span>
@@ -259,7 +262,7 @@ class App {
       </li>
       `;
 
-    if (workout.type === 'cycling')
+    if (workout.type === 'fail')
       html += `
         <div class="workout__details">
           <span class="workout__icon">⚡️</span>
