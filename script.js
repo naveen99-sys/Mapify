@@ -5,12 +5,12 @@ class Workout {
   id = (Date.now() + '').slice(-10);
   clicks = 0;
 
-  constructor(coords, distance, duration) {
+  constructor(coords, PHLevel, CName) {
     // this.date = ...
     // this.id = ...
     this.coords = coords; // [lat, lng]
-    this.distance = distance; // in km
-    this.duration = duration; // in min
+    this.PHLevel = PHLevel; // in km
+    this.CName = CName; // in min
   }
 
   _setDescription() {
@@ -30,16 +30,16 @@ class Workout {
 class Pass extends Workout {
   type = 'pass';
 
-  constructor(coords, distance, duration, cadence) {
-    super(coords, distance, duration);
-    this.cadence = cadence;
+  constructor(coords, PHLevel, CName, Result) {
+    super(coords, PHLevel, CName);
+    this.Result = Result;
     this.calcPace();
     this._setDescription();
   }
 
   calcPace() {
     // min/km
-    this.pace = this.duration / this.distance;
+    this.pace = this.CName / this.PHLevel;
     return this.pace;
   }
 }
@@ -47,9 +47,9 @@ class Pass extends Workout {
 class Fail extends Workout {
   type = 'fail';
 
-  constructor(coords, distance, duration, elevationGain) {
-    super(coords, distance, duration);
-    this.elevationGain = elevationGain;
+  constructor(coords, PHLevel, CName, Redo) {
+    super(coords, PHLevel, CName);
+    this.Redo = Redo;
     // this.type = 'fail';
     this.calcSpeed();
     this._setDescription();
@@ -57,7 +57,7 @@ class Fail extends Workout {
 
   calcSpeed() {
     // km/h
-    this.speed = this.distance / (this.duration / 60);
+    this.speed = this.PHLevel / (this.CName / 60);
     return this.speed;
   }
 }
@@ -71,10 +71,10 @@ class Fail extends Workout {
 const form = document.querySelector('.form');
 const containerWorkouts = document.querySelector('.workouts');
 const inputType = document.querySelector('.form__input--type');
-const inputDistance = document.querySelector('.form__input--distance');
-const inputDuration = document.querySelector('.form__input--duration');
-const inputCadence = document.querySelector('.form__input--cadence');
-const inputElevation = document.querySelector('.form__input--elevation');
+const inputPHLevel = document.querySelector('.form__input--PHLevel');
+const inputCName = document.querySelector('.form__input--CName');
+const inputResult = document.querySelector('.form__input--Result');
+const inputRedo = document.querySelector('.form__input--Redo');
 
 class App {
   #map;
@@ -91,7 +91,7 @@ class App {
 
     // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
-    inputType.addEventListener('change', this._toggleElevationField);
+    inputType.addEventListener('change', this._toggleRedoField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
 
@@ -130,15 +130,15 @@ class App {
   _showForm(mapE) {
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
-    inputDistance.focus();
+    inputPHLevel.focus();
   }
 
   _hideForm() {
     // Empty inputs
-    inputDistance.value =
-      inputDuration.value =
-      inputCadence.value =
-      inputElevation.value =
+    inputPHLevel.value =
+      inputCName.value =
+      inputResult.value =
+      inputRedo.value =
         '';
 
     form.style.display = 'none';
@@ -146,9 +146,9 @@ class App {
     setTimeout(() => (form.style.display = 'grid'), 1000);
   }
 
-  _toggleElevationField() {
-    inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
-    inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
+  _toggleRedoField() {
+    inputRedo.closest('.form__row').classList.toggle('form__row--hidden');
+    inputResult.closest('.form__row').classList.toggle('form__row--hidden');
   }
 
   _newWorkout(e) {
@@ -160,39 +160,37 @@ class App {
 
     // Get data from form
     const type = inputType.value;
-    const distance = +inputDistance.value;
-    const duration = +inputDuration.value;
+    const PHLevel = +inputPHLevel.value;
+    const CName = inputCName.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
 
     // If workout running, create running object
     if (type === 'pass') {
-      const cadence = +inputCadence.value;
+      const Result = +inputResult.value;
 
       // Check if data is valid
       if (
-        // !Number.isFinite(distance) ||
-        // !Number.isFinite(duration) ||
-        // !Number.isFinite(cadence)
-        !validInputs(distance, duration, cadence) ||
-        !allPositive(distance, duration, cadence)
+        // !Number.isFinite(PHLevel) ||
+        // !Number.isFinite(CName) ||
+        // !Number.isFinite(Result)
+        !validInputs(PHLevel) ||
+        !allPositive(PHLevel)
       )
         return alert('Inputs have to be positive numbers!');
 
-      workout = new Pass([lat, lng], distance, duration, cadence);
+      workout = new Pass([lat, lng], PHLevel, CName, Result);
     }
 
     // If workout cycling, create cycling object
     if (type === 'fail') {
-      const elevation = +inputElevation.value;
+      const Redo = inputRedo.value;
 
-      if (
-        !validInputs(distance, duration, elevation) ||
-        !allPositive(distance, duration)
-      )
+      if (!validInputs(PHLevel) || !allPositive(PHLevel))
         return alert('Inputs have to be positive numbers!');
 
-      workout = new Fail([lat, lng], distance, duration, elevation);
+      workout = new Fail([lat, lng], PHLevel, CName, Redo);
+      console.log(workout);
     }
 
     // Add new object to workout array
@@ -237,12 +235,12 @@ class App {
           <span class="workout__icon">${
             workout.type === 'pass' ? '🏃‍♂️' : '🚴‍♀️'
           }</span>
-          <span class="workout__value">${workout.distance}</span>
+          <span class="workout__value">${workout.PHLevel}</span>
           <span class="workout__unit">km</span>
         </div>
         <div class="workout__details">
           <span class="workout__icon">⏱</span>
-          <span class="workout__value">${workout.duration}</span>
+          <span class="workout__value">${workout.CName}</span>
           <span class="workout__unit">min</span>
         </div>
     `;
@@ -250,13 +248,13 @@ class App {
     if (workout.type === 'pass')
       html += `
         <div class="workout__details">
-          <span class="workout__icon">⚡️</span>
-          <span class="workout__value">${workout.pace.toFixed(1)}</span>
+         <span class="workout__icon">⚡️</span>
+           <span class="workout__value">${workout.type}</span>
           <span class="workout__unit">min/km</span>
         </div>
         <div class="workout__details">
           <span class="workout__icon">🦶🏼</span>
-          <span class="workout__value">${workout.cadence}</span>
+          <span class="workout__value">${workout.Result}</span>
           <span class="workout__unit">spm</span>
         </div>
       </li>
@@ -266,12 +264,12 @@ class App {
       html += `
         <div class="workout__details">
           <span class="workout__icon">⚡️</span>
-          <span class="workout__value">${workout.speed.toFixed(1)}</span>
+          <span class="workout__value">${workout.type}</span>
           <span class="workout__unit">km/h</span>
         </div>
         <div class="workout__details">
           <span class="workout__icon">⛰</span>
-          <span class="workout__value">${workout.elevationGain}</span>
+          <span class="workout__value">${workout.Redo}</span>
           <span class="workout__unit">m</span>
         </div>
       </li>
@@ -295,7 +293,7 @@ class App {
     this.#map.setView(workout.coords, this.#mapZoomLevel, {
       animate: true,
       pan: {
-        duration: 1,
+        CName: 1,
       },
     });
 
