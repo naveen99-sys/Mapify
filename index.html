@@ -45,23 +45,32 @@
           </div>
           <div class="form__row">
             <label class="form__label">PHLevel</label>
-            <input class="form__input form__input--PHLevel" placeholder="km" />
+            <input
+              class="form__input form__input--PHLevel"
+              placeholder="PHLevel"
+            />
           </div>
           <div class="form__row">
             <label class="form__label">CName</label>
-            <input class="form__input form__input--CName" placeholder="min" />
+            <input class="form__input form__input--CName" placeholder="name" />
           </div>
 
           <div class="form__row">
             <label class="form__label">Result</label>
             <input
               class="form__input form__input--Result"
-              placeholder="Issued"
+              value="Issued"
+              id="issued-report"
+              type="text"
             />
           </div>
           <div class="form__row form__row--hidden">
             <label class="form__label">Redo</label>
-            <input class="form__input form__input--Redo" placeholder="Date" />
+            <input
+              class="form__input form__input--Redo"
+              placeholder="day/month"
+              type="date"
+            />
           </div>
           <button class="form__btn">OK</button>
         </form>

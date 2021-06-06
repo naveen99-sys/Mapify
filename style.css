@@ -74,7 +74,7 @@ a:visited {
   cursor: pointer;
 
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 2fr;
   gap: 0.75rem 1.5rem;
 }
 .workout--pass {
@@ -120,11 +120,11 @@ a:visited {
   margin-bottom: 1.75rem;
 
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr;
   gap: 0.5rem 2.5rem;
 
   /* Match height and activity boxes */
-  height: 9.25rem;
+  height: 14.25rem;
   transition: all 0.5s, transform 1ms;
 }
 
@@ -171,24 +171,6 @@ a:visited {
   display: none;
 }
 
-.copyright {
-  margin-top: auto;
-  font-size: 1.3rem;
-  text-align: center;
-  color: var(--color-light--1);
-}
-
-.twitter-link:link,
-.twitter-link:visited {
-  color: var(--color-light--1);
-  transition: all 0.2s;
-}
-
-.twitter-link:hover,
-.twitter-link:active {
-  color: var(--color-light--2);
-}
-
 /* MAP */
 #map {
   flex: 1;
@@ -212,9 +194,9 @@ a:visited {
   background-color: var(--color-dark--1);
 }
 
-.running-popup .leaflet-popup-content-wrapper {
+.pass-popup .leaflet-popup-content-wrapper {
   border-left: 5px solid var(--color-brand--2);
 }
-.cycling-popup .leaflet-popup-content-wrapper {
+.fail-popup .leaflet-popup-content-wrapper {
   border-left: 5px solid var(--color-brand--1);
 }

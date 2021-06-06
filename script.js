@@ -33,14 +33,8 @@ class Pass extends Workout {
   constructor(coords, PHLevel, CName, Result) {
     super(coords, PHLevel, CName);
     this.Result = Result;
-    this.calcPace();
-    this._setDescription();
-  }
 
-  calcPace() {
-    // min/km
-    this.pace = this.CName / this.PHLevel;
-    return this.pace;
+    this._setDescription();
   }
 }
 
@@ -51,14 +45,7 @@ class Fail extends Workout {
     super(coords, PHLevel, CName);
     this.Redo = Redo;
     // this.type = 'fail';
-    this.calcSpeed();
     this._setDescription();
-  }
-
-  calcSpeed() {
-    // km/h
-    this.speed = this.PHLevel / (this.CName / 60);
-    return this.speed;
   }
 }
 
@@ -167,7 +154,7 @@ class App {
 
     // If workout running, create running object
     if (type === 'pass') {
-      const Result = +inputResult.value;
+      const Result = inputResult.value;
 
       // Check if data is valid
       if (
@@ -180,6 +167,7 @@ class App {
         return alert('Inputs have to be positive numbers!');
 
       workout = new Pass([lat, lng], PHLevel, CName, Result);
+      console.log(workout);
     }
 
     // If workout cycling, create cycling object
@@ -235,13 +223,13 @@ class App {
           <span class="workout__icon">${
             workout.type === 'pass' ? '🏃‍♂️' : '🚴‍♀️'
           }</span>
-          <span class="workout__value">${workout.PHLevel}</span>
-          <span class="workout__unit">km</span>
+          <span class="workout__value">${workout.type}</span>
+          <span class="workout__unit"></span>
         </div>
         <div class="workout__details">
           <span class="workout__icon">⏱</span>
           <span class="workout__value">${workout.CName}</span>
-          <span class="workout__unit">min</span>
+          <span class="workout__unit"></span>
         </div>
     `;
 
@@ -249,13 +237,13 @@ class App {
       html += `
         <div class="workout__details">
          <span class="workout__icon">⚡️</span>
-           <span class="workout__value">${workout.type}</span>
-          <span class="workout__unit">min/km</span>
+           <span class="workout__value">${workout.PHLevel}</span>
+          <span class="workout__unit"></span>
         </div>
         <div class="workout__details">
           <span class="workout__icon">🦶🏼</span>
           <span class="workout__value">${workout.Result}</span>
-          <span class="workout__unit">spm</span>
+          <span class="workout__unit"></span>
         </div>
       </li>
       `;
@@ -265,12 +253,12 @@ class App {
         <div class="workout__details">
           <span class="workout__icon">⚡️</span>
           <span class="workout__value">${workout.type}</span>
-          <span class="workout__unit">km/h</span>
+          <span class="workout__unit"></span>
         </div>
         <div class="workout__details">
           <span class="workout__icon">⛰</span>
           <span class="workout__value">${workout.Redo}</span>
-          <span class="workout__unit">m</span>
+          <span class="workout__unit"></span>
         </div>
       </li>
       `;
