@@ -5,12 +5,12 @@ class Workout {
   id = (Date.now() + '').slice(-10);
   clicks = 0;
 
-  constructor(coords, PHLevel, EName) {
+  constructor(coords, PHLevel, CName) {
     // this.date = ...
     // this.id = ...
     this.coords = coords; // [lat, lng]
     this.PHLevel = PHLevel; // in km
-    this.EName = EName; // in min
+    this.CName = CName; // in min
   }
 
   _setDescription() {
@@ -30,8 +30,8 @@ class Workout {
 class Pass extends Workout {
   type = 'pass';
 
-  constructor(coords, PHLevel, EName, Result) {
-    super(coords, PHLevel, EName);
+  constructor(coords, PHLevel, CName, Result) {
+    super(coords, PHLevel, CName);
     this.Result = Result;
 
     this._setDescription();
@@ -41,8 +41,8 @@ class Pass extends Workout {
 class Fail extends Workout {
   type = 'fail';
 
-  constructor(coords, PHLevel, EName, Redo) {
-    super(coords, PHLevel, EName);
+  constructor(coords, PHLevel, CName, Redo) {
+    super(coords, PHLevel, CName);
     this.Redo = Redo;
     // this.type = 'fail';
     this._setDescription();
@@ -59,13 +59,13 @@ const form = document.querySelector('.form');
 const containerWorkouts = document.querySelector('.workouts');
 const inputType = document.querySelector('.form__input--type');
 const inputPHLevel = document.querySelector('.form__input--PHLevel');
-const inputEName = document.querySelector('.form__input--EName');
+const inputCName = document.querySelector('.form__input--CName');
 const inputResult = document.querySelector('.form__input--Result');
 const inputRedo = document.querySelector('.form__input--Redo');
 
 class App {
   #map;
-  #mapZoomLevel = 20;
+  #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
 
@@ -101,7 +101,7 @@ class App {
 
     this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
@@ -123,7 +123,7 @@ class App {
   _hideForm() {
     // Empty inputs
     inputPHLevel.value =
-      inputEName.value =
+      inputCName.value =
       inputResult.value =
       inputRedo.value =
         '';
@@ -148,7 +148,7 @@ class App {
     // Get data from form
     const type = inputType.value;
     const PHLevel = +inputPHLevel.value;
-    const EName = inputEName.value;
+    const CName = inputCName.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
 
@@ -159,14 +159,14 @@ class App {
       // Check if data is valid
       if (
         // !Number.isFinite(PHLevel) ||
-        // !Number.isFinite(EName) ||
+        // !Number.isFinite(CName) ||
         // !Number.isFinite(Result)
         !validInputs(PHLevel) ||
         !allPositive(PHLevel)
       )
         return alert('Inputs have to be positive numbers!');
 
-      workout = new Pass([lat, lng], PHLevel, EName, Result);
+      workout = new Pass([lat, lng], PHLevel, CName, Result);
       console.log(workout);
     }
 
@@ -177,7 +177,7 @@ class App {
       if (!validInputs(PHLevel) || !allPositive(PHLevel))
         return alert('Inputs have to be positive numbers!');
 
-      workout = new Fail([lat, lng], PHLevel, EName, Redo);
+      workout = new Fail([lat, lng], PHLevel, CName, Redo);
       console.log(workout);
     }
 
@@ -210,7 +210,7 @@ class App {
         })
       )
       .setPopupContent(
-        `${workout.type === 'pass' ? '✔️' : '❌'} ${workout.description}`
+        `${workout.type === 'pass' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
       )
       .openPopup();
   }
@@ -221,14 +221,14 @@ class App {
         <h2 class="workout__title">${workout.description}</h2>
         <div class="workout__details">
           <span class="workout__icon">${
-            workout.type === 'pass' ? '✔️' : '❌'
+            workout.type === 'pass' ? '🏃‍♂️' : '🚴‍♀️'
           }</span>
           <span class="workout__value">${workout.type}</span>
           <span class="workout__unit"></span>
         </div>
         <div class="workout__details">
-          <span class="workout__icon">🧑🏻</span>
-          <span class="workout__value">${workout.EName}</span>
+          <span class="workout__icon">⏱</span>
+          <span class="workout__value">${workout.CName}</span>
           <span class="workout__unit"></span>
         </div>
     `;
@@ -236,12 +236,12 @@ class App {
     if (workout.type === 'pass')
       html += `
         <div class="workout__details">
-         <span class="workout__icon">💧 </span>
+         <span class="workout__icon">⚡️</span>
            <span class="workout__value">${workout.PHLevel}</span>
           <span class="workout__unit"></span>
         </div>
         <div class="workout__details">
-          <span class="workout__icon">📜</span>
+          <span class="workout__icon">🦶🏼</span>
           <span class="workout__value">${workout.Result}</span>
           <span class="workout__unit"></span>
         </div>
@@ -251,12 +251,12 @@ class App {
     if (workout.type === 'fail')
       html += `
         <div class="workout__details">
-          <span class="workout__icon">💧 </span>
-          <span class="workout__value">${workout.PHLevel}</span>
+          <span class="workout__icon">⚡️</span>
+          <span class="workout__value">${workout.type}</span>
           <span class="workout__unit"></span>
         </div>
         <div class="workout__details">
-          <span class="workout__icon">📅</span>
+          <span class="workout__icon">⛰</span>
           <span class="workout__value">${workout.Redo}</span>
           <span class="workout__unit"></span>
         </div>
@@ -281,7 +281,7 @@ class App {
     this.#map.setView(workout.coords, this.#mapZoomLevel, {
       animate: true,
       pan: {
-        EName: 1,
+        CName: 1,
       },
     });
 
